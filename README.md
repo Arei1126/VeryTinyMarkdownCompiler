@@ -16,7 +16,7 @@ If DOCUMENT_TITLE is given, vtmc generates html header.
 
 _: \<hr>
 
-\![ALT_TITLE]\!IMG_URL: \<img src = IMG_URL alt = ALT_TITLE>
+\![ALT_TITLE]IMG_URL: \<img src = IMG_URL alt = ALT_TITLE>
 
 [LINK_TITLE]LINK: \<a href = LINK>LINK_TITLE\</a>
 
