@@ -8,6 +8,8 @@
 
 #define ADD(Dest,Expr) Dest = Dest + (Expr) 
 
+#define OVERWRITE_SPRINTF(Command) char buf[OUTPUT_BUFFER_SIZE];sprintf(buf, Command);strcpy(output_strings,buf);
+
 #define DEBUG 0
 
 struct line {
@@ -41,12 +43,14 @@ int oneLineCommandCouneter(char input_word, char key) {
 }
 
 int main(int argc, char **argv) {
+	int title_flag = 0;
 	if (argc > 2){
 	       printf("Usage: %s [DOUCMENT_TITLE]\n",argv[0]);
 	       exit(1);
 	}
 	
 	if (argc == 2 ){
+		title_flag = 1;
 		printf(	"<!DOCTYPE html>\n"
 		 	"<html>\n"
 			"<head>\n"
@@ -92,11 +96,6 @@ int main(int argc, char **argv) {
 		for(int i=0; i <= (int)strlen(input.strings); i++) {
 			char c = input.strings[i];
 
-			//ADD(input.header_counter, c == '#');
-			//ADD(input.strong_counter, c == '*');
-			//ADD(input.img_flag, c == '!');
-			//ADD(input.link_flag, c == '[');
-			
 			if(c == '#'){
 				input.header_counter++;
 			}else if(c == '*'){
@@ -208,6 +207,9 @@ int main(int argc, char **argv) {
 
 		// printing
 		printf("%s\n",output_strings);
+	}
+	if(title_flag){
+		printf("</body>\n</html>");
 	}
 	return 0;
 }
