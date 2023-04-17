@@ -6,7 +6,7 @@
 #define INPUT_BUFFER_SIZE 1024
 #define OUTPUT_BUFFER_SIZE 2048
 
-#define DEBUG 0
+#define DEBUG 1
 
 int single_variable_overwritten_sprintf(char *str, char *command){
 	char buf[OUTPUT_BUFFER_SIZE];
@@ -93,6 +93,10 @@ int main(int argc, char **argv) {
 
 		input.hr_flag = 0;
 		input.br_flag = 0;
+
+		input.link_title[0] = '\0';
+		input.link_src[0] = '\0';
+
 		// end of initialization
 		
 		// Command interpretation
@@ -118,7 +122,7 @@ int main(int argc, char **argv) {
 				input.hr_flag++;
 			}else if(c == '\n'){
 				input.br_flag++;
-			}else if(input.link_flag >= 1){
+			}else if(input.link_flag >= 1 && input.bracket_end_index == 0){
 				continue;
 			}else {
 				break;
@@ -134,7 +138,10 @@ int main(int argc, char **argv) {
 		//  generate link title and link url
 		if(input.link_flag > 0){
 			strncpy(input.link_title, &input.strings[input.bracket_start_index + 1], input.bracket_end_index - input.bracket_start_index - 1 );
-			
+			input.link_title[input.bracket_end_index - input.bracket_start_index -1 ] = '\0';
+#if DEBUG
+			printf("linke title: %s\n 文字数: %d",input.link_title,(int)strlen(input.link_title));
+#endif
 			strcpy(input.link_src, &input.strings[input.bracket_end_index + 1]);
 
 			// generate img src.. or a hred... tag
