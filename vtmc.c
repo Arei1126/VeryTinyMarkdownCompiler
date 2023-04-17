@@ -6,7 +6,7 @@
 #define INPUT_BUFFER_SIZE 1024
 #define OUTPUT_BUFFER_SIZE 2048
 
-#define DEBUG 1
+#define DEBUG 0
 
 int single_variable_overwritten_sprintf(char *str, char *command){
 	char buf[OUTPUT_BUFFER_SIZE];
@@ -39,11 +39,6 @@ struct line {
 	int hr_flag;  // _
 	int br_flag;  // \n
 };
-
-int oneLineCommandCouneter(char input_word, char key) {
-	if (input_word == key) return 1;
-	else return 0;
-}
 
 int main(int argc, char **argv) {
 	int title_flag = 0;
