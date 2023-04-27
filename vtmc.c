@@ -8,6 +8,7 @@
 
 #define DEBUG 0
 
+
 int single_variable_overwritten_sprintf(char *str, char *command){
 	char buf[OUTPUT_BUFFER_SIZE];
 	sprintf(buf,command, str);
@@ -38,27 +39,52 @@ struct line {
 
 	int hr_flag;  // _
 	int br_flag;  // \n
+
+	int blockquote_flag;  // >
 };
 
 int main(int argc, char **argv) {
 	int title_flag = 0;
-	if (argc > 2){
-	       printf("Usage: %s [DOUCMENT_TITLE]\n",argv[0]);
-	       exit(1);
+	switch (argc) {
+		case 2:
+			title_flag = 1;
+			printf(	"<!DOCTYPE html>\n"
+		 		"<html>\n"
+				"<head>\n"
+				"<title>\n"
+				"%s\n"
+				"</title>\n"
+				"</head>\n"
+				"<body>\n",argv[1]);
+				break;
+		case 3:
+			title_flag = 1;
+			printf(	"<!DOCTYPE html>\n"
+		 		"<html>\n"
+				"<head>\n"
+				"<title>\n"
+				"%s\n"
+				"</title>\n"
+				"<STYLE TYPE=\"text/css\">\n"
+				"<!--\n"
+				"BODY {\n"
+				"background-color:#EFEFEF;\n"
+				"FONT-STYLE:normal;\n"
+				"FONT-FAMILY:\"MS ゴシック\",serif,system-ui;\n"
+				"margin-left: 2%;\n"
+				"margin-right: 2%;\n"
+				"}\n"
+				"-->\n"
+				"</STYLE>\n"
+				"</head>\n"
+				"<body>\n",argv[1]);
+				break;
+		case 1:
+			break;
+		default:
+	       		printf("Usage: %s [DOUCMENT_TITLE]\n",argv[0]);
+	      		exit(1);
 	}
-	
-	if (argc == 2 ){
-		title_flag = 1;
-		printf(	"<!DOCTYPE html>\n"
-		 	"<html>\n"
-			"<head>\n"
-			"<title>\n"
-			"%s\n"
-			"</title>\n"
-			"</head>\n"
-			"<body>\n",argv[1]);
-			}
-
 	struct line input;
 
 	input.list_flag = 0;
@@ -92,6 +118,8 @@ int main(int argc, char **argv) {
 		input.link_title[0] = '\0';
 		input.link_src[0] = '\0';
 
+		input.blockquote_flag = 0;
+
 		// end of initialization
 		
 		// Command interpretation
@@ -115,6 +143,8 @@ int main(int argc, char **argv) {
 				input.ordered_list_flag++;
 			}else if(c == '_'){
 				input.hr_flag++;
+			}else if(c == '>'){
+				input.blockquote_flag++;
 			}else if(c == '\n'){
 				input.br_flag++;
 			}else if(input.link_flag >= 1 && input.bracket_end_index == 0){
@@ -128,7 +158,7 @@ int main(int argc, char **argv) {
 		// Generate Tags
 		char output_strings[OUTPUT_BUFFER_SIZE];
 
-		int offset = input.header_counter + input.strong_flag + input.hr_flag + input.list_flag + input.ordered_list_flag;
+		int offset = input.header_counter + input.strong_flag + input.hr_flag + input.list_flag + input.ordered_list_flag + input.blockquote_flag;
 	
 		//  generate link title and link url
 		if(input.link_flag > 0){
@@ -176,6 +206,10 @@ int main(int argc, char **argv) {
 		
 		if(input.br_flag > 0){
 			single_variable_overwritten_sprintf(output_strings,"<br>%s");
+		}
+
+		if(input.blockquote_flag > 0){
+			single_variable_overwritten_sprintf(output_strings,"<blockquotes>%s</blockquotes>");
 		}
 
 		// generate ol or ul 
